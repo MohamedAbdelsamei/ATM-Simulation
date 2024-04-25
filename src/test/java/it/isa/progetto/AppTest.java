@@ -1,20 +1,18 @@
 package it.isa.progetto;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Unit test for simple App.
- */
 public class AppTest 
 {
-    /**
-     * Rigorous Test :-)
-     */
+    
+    private ATM atm = new ATM();
+
     @Test
-    public void shouldAnswerWithTrue()
-    {
-        assertTrue( true );
+    public void testDeposit() {
+        atm.deposito(500);
+        assertEquals(2500.5, atm.getSaldo());
     }
+
 }
