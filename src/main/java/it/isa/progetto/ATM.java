@@ -3,7 +3,7 @@ package it.isa.progetto;
 import java.util.Scanner;
 
 public class ATM {
-    private static double saldo = 2000.5;
+    static double saldo = 2000.5;
 
     public static boolean autentication(String username, String pin) {
         Scanner scanner = new Scanner(System.in);
