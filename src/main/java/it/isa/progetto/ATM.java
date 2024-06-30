@@ -1,72 +1,97 @@
 package it.isa.progetto;
 
 import java.util.Scanner;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ATM {
-    static double saldo = 2000.5;
 
-    public static boolean autentication(String username, String pin) {
-        Scanner scanner = new Scanner(System.in);
+    //Use a Collection:
+    //Store instances of UserAccount in a HashMap where the key is the username and the value is the UserAccount instance. This allows efficient lookups by username.
+    private Map<String, UserAccount> accounts = new HashMap<>();
+    private UserAccount currentUser;
 
-        System.out.println("Benvenuto nell'ATM");
-        System.out.print("username: ");
-        String enteredUsername = scanner.nextLine();
-
-        System.out.print("Please enter Pin: ");
-        String enteredPin = scanner.nextLine();
-
-        if (enteredUsername.equals(username) && enteredPin.equals(pin)) {
-            System.out.println("Autenticazione con successo. Benvenuto, " + enteredUsername + "!");
-            sleepSecond(1);
-            return true;
-        } else {
-            System.out.println("Autenticazione fallita. Username o pin non validi si prega di riprovare.");
-            sleepSecond(1);
-            return false;
-        }
+    // implemented for test purpose 
+    public void setCurrentUser(UserAccount account) {
+        this.currentUser = account;
     }
 
+    public UserAccount getCurrentUser() {
+    return currentUser;
+    }
+
+
+    // Method to add a new user to the accounts map
+    public void addUser(String username, String password, double initialAmount) {
+        UserAccount account = new UserAccount(username, password, initialAmount);
+        accounts.put(username, account);
+    }
+
+    // Pause the program for a specified number of seconds
     public static void sleepSecond(int seconds) {
         try {
             Thread.sleep(seconds * 1000);
-        } catch (InterruptedException e) {
+            } 
+        catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    public static void deposito(double importo) {
+    // Authenticate a user by their username and password
+    public boolean authenticate(String username, String password) {
+        
+        UserAccount account = accounts.get(username);
+        if (account != null && account.getPassword().equals(password)) {
+            System.out.println("Authentication successfully. Welcome, " + username + "!");
+           sleepSecond(1);
+            currentUser = account;
+            return true;
+        } else {
+            System.out.println("Failed authentication. Invalid username or pin please try again.");
+          sleepSecond(1);
+            return false;
+        }
+    }
+
+   // Deposit an amount into the current user's account
+    public void deposit(double importo) {
         if (importo > 0) {
-            saldo += importo;
-            System.out.println("Deposito effettuato con successo.");
-            System.out.println("Nuovo saldo: " + saldo);
+            currentUser.setInitialAmount(currentUser.getInitialAmount() + importo);
+            System.out.println("Deposit done successfully.");
+            System.out.println("New balance: " + currentUser.getInitialAmount());
         } else {
-            System.out.println("Importo non valido per il deposito.");
+            System.out.println("Invalid amount for deposit.");
         }
-        sleepSecond(1);
+        sleepSecond(1);        
     }
 
-    public static void prelievo(double importo) {
-        if (importo > 0 && importo <= saldo) {
-            saldo -= importo;
-            System.out.println("Prelievo effettuato con successo.");
-            System.out.println("Nuovo saldo: " + saldo);
-        } else {
-            System.out.println("Importo non valido per il prelievo o saldo insufficiente.");
-        }
-        sleepSecond(1);
-    }
 
-    public static void altraOperazione() {
-        System.out.println("Vuoi selezionare un'altra opzione? (si-no)");
-        Scanner scanner = new Scanner(System.in);
-        String risposta = scanner.next();
-        if (risposta.equalsIgnoreCase("no")) {
-            System.out.println("Uscita dall'ATM. Grazie!");
-            System.exit(0);
+  // Withdraw an amount from the current user's account
+    public void withdraw(double importo) {
+        if (importo > 0 && importo <= currentUser.getInitialAmount()) {
+            currentUser.setInitialAmount(currentUser.getInitialAmount() - importo);
+            System.out.println("Withdraw done successfully.");
+            System.out.println("New balance: " + currentUser.getInitialAmount());
+        } else {
+            System.out.println("Invalid amount for withdrawal or insufficient balance.");
         }
+        sleepSecond(1);        
     }
     
-    public static double getSaldo() {
-        return saldo;
+    // Get the current balance of the authenticated user
+    public double getInitialAmount() {
+        return currentUser.getInitialAmount();
     }
+
+    // Ask the user if they want to perform another operation
+    public static void another_operation() {
+    System.out.println("Do you want to select another option? (N -> to exit)");
+    Scanner scanner = new Scanner(System.in);
+    String risposta = scanner.next();
+        if (risposta.equalsIgnoreCase("N")) {
+            System.out.println("Exiting.. ,Thank you!");
+            System.exit(0);
+        }
+    }    
+
 }
